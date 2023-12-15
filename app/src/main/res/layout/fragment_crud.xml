@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CrudFragment"
+    android:background="@color/mainBlack"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/title_homepage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fontbold"
+                    android:text="CUD Page"
+                    android:textColor="@color/white"
+                    android:textSize="25sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="36dp">
+                    <ImageView
+                        android:id="@+id/btn_pick_image"
+                        android:layout_marginBottom="18dp"
+                        android:layout_width="360dp"
+                        android:layout_height="200dp"
+                        android:src="@drawable/good"/>
+                    <EditText
+                        android:id="@+id/et_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edit_text_bg"
+                        android:fontFamily="@font/fontregular"
+                        android:hint="Judul Film"
+                        android:padding="14dp"
+                        android:textColorHint="@color/grey"
+                        android:textSize="16sp" />
+                    <EditText
+                        android:id="@+id/et_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edit_text_bg"
+                        android:fontFamily="@font/fontregular"
+                        android:layout_marginTop="14dp"
+                        android:inputType="date"
+                        android:hint="Tanggal Rilis"
+                        android:padding="14dp"
+                        android:textColorHint="@color/grey"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/et_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:fontFamily="@font/fontregular"
+                        android:hint="Deskripsi Film"
+                        android:inputType="text"
+                        android:padding="14dp"
+                        android:textColorHint="@color/grey"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Genre"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/fontbold"
+                        />
+                    <!-- Spinner Genre -->
+                    <Spinner
+                        android:id="@+id/spinner_genres"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_spinner"
+                        android:padding="15dp"
+                        android:layout_marginTop="16dp"
+                        />
+                </LinearLayout>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_create"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/btn_bg"
+                    android:fontFamily="@font/fontbold"
+                    android:text="Create"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/btn_bg"
+                    android:fontFamily="@font/fontbold"
+                    android:text="Update"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/black"
+                    android:fontFamily="@font/fontbold"
+                    android:text="Logout"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    />
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Fadhill Movie</string>
+    <!--    splash screen-->
+    <string name="splash_desc">Accompany \n Your Movie Journey</string>
+    <string name="terms_condition">By checking the box you agree to our Terms and Conditions.</string>
+    <string name="have_acc">Already Have an Account?</string>
+    <string name="new_member">New Member?</string>
+
+    <!-- login screen -->
+    <string name="title_login">Login</string>
+    <string name="desc_Login">Welcome Back to FadhilMovie</string>
+
+    <!--    register-->
+    <array name="roles">
+        <item>User</item>
+        <item>Admin</item>
+    </array>
+
+    <!-- genres -->
+    <array name="genres">
+        <item>Horror</item>
+        <item>Comedy</item>
+        <item>Action</item>
+        <item>Romance</item>
+        <item>Thriller</item>
+    </array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
