@@ -9,15 +9,4 @@ data class Movie(
     var description: String = "",
     var genre: String = "",
     var imageUrl: String = ""
-): Serializable {
-    override fun toString(): String {
-        return "Title: $title" +
-                "\n" +
-                "date: $date" +
-                "\n" +
-                "description: $description" +
-                "\n" +
-                "genre : $genre"
-    }
-
-}
+): Serializable

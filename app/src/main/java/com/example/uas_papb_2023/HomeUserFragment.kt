@@ -8,56 +8,45 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
-import com.example.uas_papb_2023.adapter.RvAdminAdapter
+import com.example.uas_papb_2023.adapter.RvUserAdapter
 import com.example.uas_papb_2023.dataClass.Movie
-import com.example.uas_papb_2023.databinding.FragmentReadAdminBinding
+import com.example.uas_papb_2023.databinding.FragmentHomeUserBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ReadAdminFragment : Fragment() {
-    private lateinit var binding: FragmentReadAdminBinding
+class HomeUserFragment : Fragment() {
+    private lateinit var binding:FragmentHomeUserBinding
     private var firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val movieCollection = firebaseFirestore.collection("movies")
     private val movieListLiveData: MutableLiveData<List<Movie>> by lazy {
         MutableLiveData<List<Movie>>()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentReadAdminBinding.inflate(inflater, container, false)
+        binding = FragmentHomeUserBinding.inflate(inflater, container, false)
+        observeMovie()
+        observeMoviesChanges()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeMovie()
-        observeMoviesChanges()
+
     }
 
     private fun observeMovie(){
         movieListLiveData.observe(this){ movies ->
             // Setel data ke RecyclerView Adapter
-            val adapter = RvAdminAdapter(movies,
+            val adapter = RvUserAdapter(movies,
                 onClickItemMovie =  { movie->
                     // Implementasi ketika item diklik
                     val intentToDetailFilmActivity = Intent(context, DetailFilmActivity::class.java)
                     intentToDetailFilmActivity.putExtra("EXT_MOVIE", movie)
                     startActivity(intentToDetailFilmActivity)
-                }
-                , onLongClickItemMovie = { movie->
-                    // Implementasi ketika item diklik lama
-                    val viewPagerAdmin = MainAdminActivity.viewPagerAdmin
-                    // Mendapatkan referensi ke fragment ke-0 dalam ViewPager
-                    val crudFragment = viewPagerAdmin.adapter?.instantiateItem(viewPagerAdmin, 0) as CrudFragment
-                    crudFragment.setDataUpdate(movie)
-                    viewPagerAdmin.currentItem = 0
                 })
-            binding.rvMovie.adapter = adapter
+            binding.rvMovieUser.adapter = adapter
         }
     }
 
@@ -76,4 +65,5 @@ class ReadAdminFragment : Fragment() {
             }
         }
     }
+
 }

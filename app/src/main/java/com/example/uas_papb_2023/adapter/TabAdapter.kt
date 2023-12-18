@@ -10,7 +10,6 @@ import com.example.uas_papb_2023.ReadAdminFragment
 class TabAdapter (fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
-        val firebaseAuth = MainAdminActivity.firebaseAuth
         return when (position) {
             0 -> CrudFragment()
             1 -> ReadAdminFragment()

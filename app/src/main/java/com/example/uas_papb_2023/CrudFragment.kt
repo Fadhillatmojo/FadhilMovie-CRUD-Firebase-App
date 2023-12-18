@@ -2,11 +2,11 @@ package com.example.uas_papb_2023
 
 import android.R
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +15,14 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.uas_papb_2023.dataClass.Movie
 import com.example.uas_papb_2023.databinding.FragmentCrudBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
+
 
 class CrudFragment : Fragment() {
     private lateinit var binding: FragmentCrudBinding
@@ -46,6 +48,7 @@ class CrudFragment : Fragment() {
         firebaseStorage = FirebaseStorage.getInstance()
 
         with(binding){
+
             // spinner adapter role
             val adapterGenres = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, genres)
             var selectedGenre ="Horror"
@@ -84,28 +87,41 @@ class CrudFragment : Fragment() {
                             Toast.makeText(requireContext(), "Masukkan Data yang Benar!", Toast.LENGTH_LONG).show()
                         }
                     }
-//                    binding.btnSubmit.setOnClickListener {
-//                        uploadImage(uploadImageUri!!)
-//                        AdminActivity.viewpagers.currentItem = 1
-//                    }
+                    //button update movie
+                    btnUpdate.setOnClickListener {
+                        if (etTitle.text.isNotEmpty() && etDate.text.isNotEmpty() && etDescription.text.isNotEmpty()){
+                            uploadImageUri?.let { updateMovie(selectedGenre, it) }
+                        } else {
+                            Toast.makeText(requireContext(), "Masukkan Data yang Benar!", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Wajib Ada Gambar!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             // button logout
-            btnLogout.setOnClickListener(){
+            btnLogout.setOnClickListener{
                 MainAdminActivity.firebaseAuth.signOut()
+                // Di dalam aktivitas login setelah pengguna berhasil login
+                val context: Context = requireActivity()
+                val sharedPref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+                val userLogin = sharedPref.edit()
+                // Set isLoggedIn menjadi true setelah berhasil login
+                userLogin.putBoolean("isAdminLoggedIn", false)
+                userLogin.apply()
                 val intentToLoginActivity = Intent(requireContext(), LoginActivity::class.java)
                 startActivity(intentToLoginActivity)
                 Toast.makeText(requireContext(), "Berhasil Logout!", Toast.LENGTH_SHORT).show()
                 finishCurrentActivity()
             }
         }
-
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
     private fun openFileChooser() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
@@ -153,12 +169,89 @@ class CrudFragment : Fragment() {
         }
     }
 
+    private fun updateMovie(selectedGenre:String, imageUri: Uri){
+        val storageRef = firebaseStorage.reference.child("images/${UUID.randomUUID()}")
+        val uploadImageTask = storageRef.putFile(imageUri!!)
+        uploadImageTask.addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener {imageUri ->
+                val updateId = binding.tvIdFilm.text.toString()
+                var title = binding.etTitle.text.toString()
+                var date = binding.etDate.text.toString()
+                var description = binding.etDescription.text.toString()
+                var genre = selectedGenre
+                val movieToUpdate = Movie(
+                    id = updateId,
+                    title = title,
+                    date = date,
+                    description = description,
+                    genre = genre,
+                    imageUrl = imageUri.toString()
+                )
+
+                val imageUriOld = binding.tvUriImage.text.toString()
+                movieCollection
+                    .document(updateId)
+                    .set(movieToUpdate)
+                    .addOnSuccessListener {
+                        resetForm()
+                        deleteImageFromStorage(imageUriOld)
+                        Toast.makeText(requireContext(), "Success Update Movie!", Toast.LENGTH_LONG).show()
+                        MainAdminActivity.viewPagerAdmin.currentItem = 1
+                        Log.d("UploadSuccess", "Image URL: $imageUri")
+                    }
+                    .addOnFailureListener {exception ->
+                        Log.d("MainActivity", "Error updating Movie: ", exception)
+                    }
+            }
+        }
+    }
+
+    // Fungsi untuk menghapus gambar dari Firebase Storage berdasarkan URL gambar
+    private fun deleteImageFromStorage(imageUrl: String) {
+        // Dapatkan referensi ke Firebase Storage
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.getReferenceFromUrl(imageUrl)
+
+        // Hapus gambar dari Firebase Storage
+        storageRef.delete()
+            .addOnSuccessListener {
+                Log.d("MainActivityAdmin", "Gambar Dihapus dari storage")
+            }
+            .addOnFailureListener {
+                Log.d("MainActivityAdmin", "Error deleting image from storage: ", it)
+            }
+    }
+
     private fun resetForm(){
         with(binding){
+            tvIdFilm.text = null
+            tvUriImage.text = null
             etDate.text.clear()
             etDescription.text.clear()
             etTitle.text.clear()
             spinnerGenres.setSelection(0)
+            val imageDefault = com.example.uas_papb_2023.R.drawable.add_image
+            btnPickImage.setImageResource(imageDefault)
+            btnCreate.visibility = View.VISIBLE
+            btnUpdate.visibility = View.GONE
+        }
+    }
+
+    fun setDataUpdate(movie:Movie){
+        with(binding){
+            Glide.with(requireContext()).load(movie.imageUrl).into(btnPickImage)
+            tvIdFilm.text = movie.id
+            tvUriImage.text = movie.imageUrl
+            etTitle.setText(movie.title)
+            etDate.setText(movie.date)
+            etDescription.setText(movie.description)
+            val dataGenre = movie.genre // Ganti dengan nilai yang sesuai dari Firebase
+            val selectedIndex = genres.indexOf(dataGenre)
+            if (selectedIndex != -1) {
+                spinnerGenres.setSelection(selectedIndex)
+            }
+            btnCreate.visibility = View.GONE
+            btnUpdate.visibility = View.VISIBLE
         }
     }
 

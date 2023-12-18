@@ -11,12 +11,12 @@ import com.example.uas_papb_2023.dataClass.Movie
 import com.example.uas_papb_2023.databinding.ItemMovieBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-
 typealias onClickItemMovie = (Movie) -> Unit
+typealias onLongClickItemMovie = (Movie) -> Unit
 
 // menerima dua buah parameter, yakni list disasternya, sama onclickdisaster,
 // jadi ketika itemnya itu di click dia dapat menjalankan suatu fungsi
-class RvAdminAdapter (private val listMovie: List<Movie>, private val onClickItemMovie: onClickItemMovie) :
+class RvAdminAdapter (private val listMovie: List<Movie>, private val onClickItemMovie: onClickItemMovie, private val onLongClickItemMovie:onLongClickItemMovie) :
     RecyclerView.Adapter<RvAdminAdapter.ItemDisasterViewHolder>(){
     private var firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val movieCollection = firebaseFirestore.collection("movies")
@@ -29,6 +29,10 @@ class RvAdminAdapter (private val listMovie: List<Movie>, private val onClickIte
                 txtGenre.text = movie.genre
                 itemView.setOnClickListener{
                     onClickItemMovie(movie)
+                }
+                itemView.setOnLongClickListener{
+                    onLongClickItemMovie(movie)
+                    true
                 }
             }
             Glide.with(itemView.context).load(movie.imageUrl).into(binding.imageMovie)
