@@ -28,15 +28,15 @@ class MainAdminActivity : AppCompatActivity() {
 
         val username = intent.getStringExtra("EXT_USERNAME")
         val sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val email = sharedPref.getString("email", "")
+        val usernameSharedPref = sharedPref.getString("username", "")
 
         with(binding){
             // set tv email welcoming user
             var textUsername = ""
-            if (username != null) {
-                textUsername = "Welcome, $username!!"
+            textUsername = if (username != null) {
+                "Welcome, $username!!"
             } else {
-                textUsername = "Welcome, $email!!"
+                "Welcome, $usernameSharedPref!!"
             }
             binding.tvUsername.text = textUsername
             // set adapter dari si tab layout

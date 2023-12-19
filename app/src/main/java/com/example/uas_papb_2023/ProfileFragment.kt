@@ -23,7 +23,7 @@ class ProfileFragment : Fragment() {
 
         // set onclick listener ketika logout button dipencet
         binding.btnLogout.setOnClickListener{
-            MainAdminActivity.firebaseAuth.signOut()
+            MainUserActivity.firebaseAuth.signOut()
             // Di dalam aktivitas login setelah pengguna berhasil login
             val context: Context = requireActivity()
             val sharedPref = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)

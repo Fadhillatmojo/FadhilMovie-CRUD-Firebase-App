@@ -66,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
                             val userLogin = sharedPref.edit()
                             // Set isLoggedIn menjadi true setelah berhasil login
                             userLogin.putBoolean("isAdminLoggedIn", true)
-                            userLogin.putString("email", currentUser.email)
+                            userLogin.putString("username", userData["username"] as String)
                             userLogin.apply()
 
                             val intentToAdminActivity = Intent(this@LoginActivity, MainAdminActivity::class.java)
@@ -79,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
                             val userLogin = sharedPref.edit()
                             // Set isLoggedIn menjadi true setelah berhasil login
                             userLogin.putBoolean("isUserLoggedIn", true)
-                            userLogin.putString("email", currentUser.email)
+                            userLogin.putString("username", userData["username"] as String)
                             userLogin.apply()
 
                             val intentToUserActivity = Intent(this@LoginActivity, MainUserActivity::class.java)

@@ -1,5 +1,6 @@
 package com.example.uas_papb_2023
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,11 +22,26 @@ class HomeUserFragment : Fragment() {
         MutableLiveData<List<Movie>>()
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeUserBinding.inflate(inflater, container, false)
+        val intent = activity?.intent
+        var username = ""
+        val sharedPref = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val usernameSharedPref = sharedPref?.getString("username", "null")
+        // Memeriksa apakah intent tidak null dan memiliki extra dengan kunci yang diinginkan
+        username = if (intent != null && intent.hasExtra("EXT_USERNAME")) {
+            // Mendapatkan nilai dari extra
+            intent.getStringExtra("EXT_USERNAME").toString()
+        } else {
+            usernameSharedPref.toString()
+        }
+        with(binding){
+            tvUsernameUser.text = username
+        }
         observeMovie()
         observeMoviesChanges()
         return binding.root
