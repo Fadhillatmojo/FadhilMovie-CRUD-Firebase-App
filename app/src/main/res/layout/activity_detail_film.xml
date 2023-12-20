@@ -14,7 +14,8 @@
         app:layout_constraintBottom_toBottomOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="50dp">
             <ImageView
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -25,19 +26,32 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/image_film"
-                android:layout_width="360dp"
-                android:layout_height="200dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview_image_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:src="@drawable/good"
+                app:cardCornerRadius="15dp"
+                app:cardUseCompatPadding="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_back">
+
+                <ImageView
+                    android:id="@+id/image_film"
+                    android:layout_width="360dp"
+                    android:layout_height="360dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/good"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+            </androidx.cardview.widget.CardView>
+
+
 
             <TextView
                 android:id="@+id/tv_title"
-                android:textAlignment="center"
                 android:layout_marginHorizontal="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +62,7 @@
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/image_film" />
+                app:layout_constraintTop_toBottomOf="@+id/cardview_image_detail" />
 
             <TextView
                 android:id="@+id/tv_rilis_date_title"
@@ -104,7 +118,7 @@
                 android:id="@+id/tv_genre_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="18dp"
                 android:fontFamily="@font/fontregular"
                 android:text="Genre: "
                 android:textColor="@color/grey"
@@ -112,17 +126,33 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_rilis_date_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_desc" />
 
-            <TextView
-                android:id="@+id/tv_genre"
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/fontregular"
-                android:text="Horror"
-                android:textColor="@color/white"
-                android:textSize="14sp"
+                android:backgroundTint="@color/secondary"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_genre_title"
                 app:layout_constraintStart_toEndOf="@+id/tv_genre_title"
-                app:layout_constraintTop_toTopOf="@+id/tv_genre_title" />
+                app:layout_constraintTop_toTopOf="@+id/tv_genre_title">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="3dp"
+                    android:paddingHorizontal="15dp">
+                    <TextView
+                        android:id="@+id/tv_genre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fontregular"
+                        android:text="Horror"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                         />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

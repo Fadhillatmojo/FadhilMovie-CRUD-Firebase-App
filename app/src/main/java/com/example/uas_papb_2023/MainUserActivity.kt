@@ -20,6 +20,7 @@ class MainUserActivity : AppCompatActivity() {
                 when(it.itemId){
                     R.id.nav_home -> replaceFragment(HomeUserFragment())
                     R.id.nav_profile -> replaceFragment(ProfileFragment())
+                    R.id.nav_bookmark -> replaceFragment(BookmarkUserFragment())
                     else -> {}
                 }
                 true

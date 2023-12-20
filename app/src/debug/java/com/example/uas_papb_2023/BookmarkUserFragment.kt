@@ -1,5 +1,6 @@
 package com.example.uas_papb_2023
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,31 +8,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
-import com.example.uas_papb_2023.adapter.RvAdminAdapter
+import com.example.uas_papb_2023.adapter.RvUserAdapter
 import com.example.uas_papb_2023.dataClass.Movie
 import com.example.uas_papb_2023.database.MovieConverter
 import com.example.uas_papb_2023.database.MovieRoom
 import com.example.uas_papb_2023.database.MovieRoomDao
 import com.example.uas_papb_2023.database.MovieRoomDatabase
-import com.example.uas_papb_2023.databinding.FragmentReadAdminBinding
+import com.example.uas_papb_2023.databinding.FragmentBookmarkUserBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ReadAdminFragment : Fragment() {
-    private lateinit var binding: FragmentReadAdminBinding
+class BookmarkUserFragment : Fragment() {
+    private lateinit var binding: FragmentBookmarkUserBinding
     private var firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val movieCollection = firebaseFirestore.collection("movies")
+    private val bookmarkCollection = firebaseFirestore.collection("bookmarks")
     private val movieListLiveData: MutableLiveData<List<Movie>> by lazy {
         MutableLiveData<List<Movie>>()
     }
     private lateinit var roomMovieDao: MovieRoomDao
     private lateinit var roomDatabase: MovieRoomDatabase
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,38 +44,49 @@ class ReadAdminFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentReadAdminBinding.inflate(inflater, container, false)
+        // membuat binding
+        binding = FragmentBookmarkUserBinding.inflate(inflater, container, false)
+        val sharedPref = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val userId = sharedPref?.getString("userId", "null")
+        observeBookmarkMovie()
+        observeMovieBookmarkChanges(userId!!)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeMovie()
-        observeMoviesChanges()
-    }
-
-    private fun observeMoviesChanges() {
-        movieCollection.addSnapshotListener{ snapshots, error ->
+    private fun observeMovieBookmarkChanges(userId:String) {
+        val context = context ?: return // pemeriksaan untuk memastikan konteks masih terlampir
+        bookmarkCollection
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener{ snapshots, error ->
             // jika dia terjadi error maka dia akan memunculkan log
             if(error != null){
-                Log.d("MainAdminActivity", "Error listening for movies changes: ", error)
+                Log.d("MainUserActivity", "Error listening for movies changes: ", error)
                 return@addSnapshotListener
             }
             // jika gak error maka akan langsung ke sini
-            val movies = snapshots?.toObjects(Movie::class.java)
-            val roomMovies = MovieConverter.convertMovieListToRoom(movies)
+            val idFilmList = snapshots?.documents?.map { it.getString("filmId") }
 
-            if (movies != null) {
-//                movieListLiveData.postValue(movies)
-                for (movie in movies) {
-                    Log.d("MainAdminActivity", "Movie: $movie")
-                }
-                saveMoviesToRoom(roomMovies)
+            // Jika ada idFilm, ambil data dari koleksi movies
+            if (idFilmList != null && idFilmList.isNotEmpty()) {
+                binding.ivEmptyBookmark.visibility = View.GONE
+                movieCollection
+                    .whereIn("id", idFilmList)
+                    .get()
+                    .addOnSuccessListener { moviesSnapshots ->
+                        val movies = moviesSnapshots.toObjects(Movie::class.java)
+                        val roomMovies = MovieConverter.convertMovieListToRoom(movies)
+
+                        saveMoviesBookmarkToRoom(roomMovies)
+                    }
+                    .addOnFailureListener { e ->
+                        Log.d("BookmarkUserFragment", "Error getting movies: ", e)
+                    }
+            } else {
+                binding.ivEmptyBookmark.visibility = View.VISIBLE
             }
         }
     }
-
-    private fun saveMoviesToRoom(roomMovies: List<MovieRoom>) {
+    private fun saveMoviesBookmarkToRoom(roomMovies: List<MovieRoom>) {
         // Simpan data ke Room
         lifecycleScope.launch(Dispatchers.IO) {
             // Hapus semua data di Room terlebih dahulu
@@ -88,25 +99,17 @@ class ReadAdminFragment : Fragment() {
             movieListLiveData.postValue(movies)
         }
     }
-    private fun observeMovie(){
+    private fun observeBookmarkMovie(){
         movieListLiveData.observe(this){ movies ->
             // Setel data ke RecyclerView Adapter
-            val adapter = RvAdminAdapter(movies,
+            val adapter = RvUserAdapter(movies,
                 onClickItemMovie =  { movie->
                     // Implementasi ketika item diklik
                     val intentToDetailFilmActivity = Intent(context, DetailFilmActivity::class.java)
                     intentToDetailFilmActivity.putExtra("EXT_MOVIE", movie)
                     startActivity(intentToDetailFilmActivity)
-                }
-                , onLongClickItemMovie = { movie->
-                    // Implementasi ketika item diklik lama
-                    val viewPagerAdmin = MainAdminActivity.viewPagerAdmin
-                    // Mendapatkan referensi ke fragment ke-0 dalam ViewPager
-                    val crudFragment = viewPagerAdmin.adapter?.instantiateItem(viewPagerAdmin, 0) as CrudFragment
-                    crudFragment.setDataUpdate(movie)
-                    viewPagerAdmin.currentItem = 0
                 })
-            binding.rvMovie.adapter = adapter
+            binding.rvMovieBookmark.adapter = adapter
         }
     }
 }

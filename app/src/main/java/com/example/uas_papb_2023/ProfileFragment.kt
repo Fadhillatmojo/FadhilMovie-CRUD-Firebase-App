@@ -20,6 +20,11 @@ class ProfileFragment : Fragment() {
         // membuat binding
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         val view = binding.root
+        val sharedPref = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val usernameSharedPref = sharedPref?.getString("username", "null")
+        val emailSharedPref = sharedPref?.getString("email", "null")
+        binding.tvUsername.text = usernameSharedPref
+        binding.tvEmail.text = emailSharedPref
 
         // set onclick listener ketika logout button dipencet
         binding.btnLogout.setOnClickListener{
@@ -30,6 +35,9 @@ class ProfileFragment : Fragment() {
             val userLogin = sharedPref.edit()
             // Set isLoggedIn menjadi true setelah berhasil login
             userLogin.putBoolean("isUserLoggedIn", false)
+            userLogin.putString("userId", "null")
+            userLogin.putString("username", "null")
+            userLogin.putString("email", "null")
             userLogin.apply()
             // intent untuk logout
             val intenttoLoginActivity = Intent(context, LoginActivity::class.java)
